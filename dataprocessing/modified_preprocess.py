@@ -2,7 +2,6 @@ import multiprocessing as mp
 from glob import glob
 from multiprocessing import Pool
 
-from tqdm import tqdm
 import numpy as np
 from tqdm.contrib.concurrent import process_map
 
@@ -34,18 +33,28 @@ paths = chunks[cfg.current_chunk]
 #    p.close()
 #    p.join()
 
-
-print("Start scaling.")
-#multiprocess(to_off)
-for path in paths:
+def to_off_wrapper(path):
     to_off(path)
-    
-print("Binary flags generation.")
-for path in paths:
-    generate_labels(path)
-#process_map(generate_labels, paths, max_workers=3, chunksize=1)
 
-print("Start voxelized pointcloud sampling.")
-voxelized_pointcloud_sampling.init(cfg)
-for path in paths:
+def generate_labels_wrapper(path):
+    generate_labels(path)
+
+def voxelized_pointcloud_sampling_wrapper(path):
     voxelized_pointcloud_sampling.voxelized_pointcloud_sampling(path)
+
+def main():
+    function_order = cfg.function_order.split(',')
+    for func_name in function_order:
+        if func_name == 'to_off':
+            print("Start scaling.")
+            multiprocess(to_off_wrapper)
+        elif func_name == 'generate_labels':
+            print("Binary flags generation.")
+            process_map(generate_labels_wrapper, paths, max_workers=3, chunksize=1)
+        elif func_name == 'voxelized_pointcloud_sampling':
+            print("Start voxelized pointcloud sampling.")
+            voxelized_pointcloud_sampling.init(cfg)
+            multiprocess(voxelized_pointcloud_sampling_wrapper)
+
+if __name__ == '__main__':
+    main()

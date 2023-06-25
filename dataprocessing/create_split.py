@@ -1,7 +1,7 @@
 import os
 from collections import defaultdict
 from glob import glob
-
+import random
 import numpy as np
 
 import configs.config_loader as cfg_loader
@@ -34,9 +34,9 @@ for class_path in res.keys():
     all_samples = res[class_path]
 
     # 3D-R2N2 way of splitting data
-    all_samples = sorted(all_samples)
+    #all_samples = sorted(all_samples)
     # NDF way of splitting data
-    # random.shuffle(all_samples)
+    random.shuffle(all_samples)
 
     # Number of examples
     n_total = len(all_samples)

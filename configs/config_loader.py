@@ -88,6 +88,13 @@ def config_parser():
             Default is -1, that is, using all available cpus.",
     )
 
+    parser.add_argument(
+        '--function_order', 
+        type=str, 
+        default='to_off,generate_labels,voxelized_pointcloud_sampling',
+        help='Comma-separated list of function names in the order to execute them'
+    )
+
     # Creating a data test/train/validation split
     parser.add_argument(
         "--class_folders",
@@ -129,7 +136,7 @@ def config_parser():
     parser.add_argument(
         "--batch_size",
         type=int,
-        default=4,
+        default=1,
         help="Number of objects provided to the NDF network in one batch during training.\
                             Influences training speed (larger batches result in shorter epochs) but also GPU \
                              memory usage (higher values need more memory). Needs to be balanced with \
